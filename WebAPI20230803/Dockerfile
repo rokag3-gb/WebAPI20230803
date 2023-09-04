@@ -14,7 +14,8 @@ COPY --from=chisel /opt/chisel/chisel /usr/bin/
 
 # /rootfs 디렉토리 생성하고 chisel cut 으로 Ubuntu 22.04 릴리즈에 필요한 라이브러리를 추출해서 /rootfs 디렉토리에 저장
 RUN mkdir /rootfs
-RUN chisel cut --release "ubuntu-22.04" --root /rootfs/ libicu70_libs libssl3_libs libc6_libs dotnet-runtime-6.0_libs dotnet-hostfxr-6.0_libs libgcc-s1_libs liblttng-ust1_libs libstdc++6_libs libunwind-13_libs libunwind8_libs zlib1g_libs
+RUN chisel cut --release "ubuntu-22.04" --root /rootfs/ libicu70_libs
+# libssl3_libs libc6_libs dotnet-runtime-6.0_libs dotnet-hostfxr-6.0_libs libgcc-s1_libs liblttng-ust1_libs libstdc++6_libs libunwind-13_libs libunwind8_libs zlib1g_libs
 # && apt-get update && apt-get install -y bash
 
 WORKDIR /source
