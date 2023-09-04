@@ -12,9 +12,11 @@ namespace WebAPI20230803
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            //builder.WebHost.ConfigureKestrel(opt => {
-            //    opt.ListenAnyIP(8080);
-            //});
+
+            //builder.WebHost.UseUrls("http://*:8080");
+            builder.WebHost.ConfigureKestrel(opt => {
+                opt.ListenAnyIP(8080);
+            });
 
             var app = builder.Build();
 

@@ -20,9 +20,9 @@ RUN chisel cut --release "ubuntu-22.04" --root /rootfs/ libicu70_libs libssl3_li
 WORKDIR /source
 
 COPY . .
-RUN dotnet restore "WebAPI20230803.sln"
 
-WORKDIR /source/WebAPI20230803
+RUN dotnet restore "WebAPI20230803.csproj"
+
 
 # °Ô½Ã
 RUN dotnet publish -c Release -o /app --self-contained false
