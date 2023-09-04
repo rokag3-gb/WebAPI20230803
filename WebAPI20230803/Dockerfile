@@ -1,4 +1,3 @@
-
 # golang:1.20 이미지를 chisel 이름으로 새로운 단계 시작
 FROM golang:1.20 as chisel
 
@@ -15,7 +14,8 @@ COPY --from=chisel /opt/chisel/chisel /usr/bin/
 
 # /rootfs 디렉토리 생성하고 chisel cut 으로 Ubuntu 22.04 릴리즈에 필요한 라이브러리를 추출해서 /rootfs 디렉토리에 저장
 RUN mkdir /rootfs
-RUN chisel cut --release "ubuntu-22.04" --root /rootfs/ libicu70_libs libssl3_libs
+RUN chisel cut --release "ubuntu-22.04" --root /rootfs/ libicu70_libs libssl3_libs libc6_libs dotnet-runtime-6.0_libs dotnet-hostfxr-6.0_libs libgcc-s1_libs liblttng-ust1_libs libstdc++6_libs libunwind-13_libs libunwind8_libs zlib1g_libs
+# && apt-get update && apt-get install -y bash
 
 WORKDIR /source
 
@@ -25,7 +25,11 @@ RUN dotnet restore "WebAPI20230803.csproj"
 
 
 # 게시
-RUN dotnet publish -c Release -o /app --self-contained false
+RUN dotnet publish -c Release -o /app --os linux --arch x64 --self-contained true
+# -p:PublishSingleFile=true
+# -p:PublishProfile=DefaultContainer
+# RUN dotnet publish --os linux --arch x64 --self-contained false -c Release -o /app
+# RUN dotnet publish -c Release -o /app --self-contained false
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/nightly/aspnet:7.0-jammy-chiseled
@@ -37,9 +41,9 @@ COPY --from=build /rootfs /
 WORKDIR /app
 COPY --from=build /app .
 
-#EXPOSE 80
+EXPOSE 80
 EXPOSE 8080
-#EXPOSE 443
+EXPOSE 443
 ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]
 
 

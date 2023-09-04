@@ -13,7 +13,8 @@ namespace WebAPI20230803
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            //builder.WebHost.UseUrls("http://*:8080");
+            builder.WebHost.UseKestrel();
+            builder.WebHost.UseUrls("http://*:8080");
             builder.WebHost.ConfigureKestrel(opt => {
                 opt.ListenAnyIP(8080);
             });
