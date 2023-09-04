@@ -37,9 +37,9 @@ COPY --from=build /rootfs /
 WORKDIR /app
 COPY --from=build /app .
 
-EXPOSE 80
+#EXPOSE 80
 EXPOSE 8080
-EXPOSE 443
+#EXPOSE 443
 ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]
 
 
