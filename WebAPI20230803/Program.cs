@@ -16,8 +16,8 @@ namespace WebAPI20230803
             builder.Services.AddSwaggerGen();
             builder.Services.AddSingleton<DapperContext>();
 
-            builder.WebHost.UseKestrel();
-            builder.WebHost.UseUrls("http://*:8080");
+            //builder.WebHost.UseKestrel();
+            builder.WebHost.UseUrls("http://0.0.0.0:8080");
             builder.WebHost.ConfigureKestrel(opt => {
                 opt.ListenAnyIP(8080);
             });

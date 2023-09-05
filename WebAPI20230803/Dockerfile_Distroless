@@ -1,0 +1,77 @@
+# .NET SDK를 사용하여 앱 빌드
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /app
+
+# 소스 코드 복사
+COPY . .
+
+# 앱 빌드
+RUN dotnet publish -c Release -o out /p:self-contained=true
+
+# Distroless 베이스 이미지를 사용하여 최종 이미지 생성
+FROM gcr.io/distroless/cc
+# FROM gcr.io/distroless/base
+# FROM gcr.io/distroless/dotnet:latest
+# FROM gcr.io/distroless/dotnet/core/aspnet:3.1
+# FROM gcr.io/distroless/dotnet/core/aspnet:debug
+WORKDIR /app
+COPY --from=build /app/out .
+
+ENTRYPOINT ["./WebAPI20230803"]
+
+#############################################
+
+## FROM gcr.io/distroless/base
+#FROM gcr.io/distroless/dotnet/core/aspnet:3.1
+## RUN apk add bash
+## && apt-get update && apt-get install -y dotnet-sdk-6.0
+#
+## dotnet build 명령을 사용하여 앱을 빌드합니다.
+#RUN dotnet build WebAPI20230803.csproj -c Release -o bin/
+#
+## dotnet publish 명령을 사용하여 앱을 배포합니다.
+#RUN dotnet publish WebAPI20230803.csproj -c Release -o bin/ -r linux-x64
+#
+#COPY ./bin/Debug/net7.0 /app
+#
+## CMD ["/app/WebAPI20230803"]
+#
+#ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]
+
+#############################################
+
+## 베이스 이미지 설정
+#FROM gcr.io/distroless/base AS base
+#
+#RUN apt-get update && apt-get install -y dotnet-sdk-7.0
+#
+#WORKDIR /app
+#EXPOSE 8080
+#
+## 빌드 이미지 설정
+## FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
+## RUN apk add --no-cache dotnet-sdk-7.0
+#
+#
+#WORKDIR /src
+#COPY ["WebAPI20230803.csproj", "."]
+#RUN dotnet restore "./WebAPI20230803.csproj"
+#COPY . .
+#WORKDIR "/src/."
+#RUN dotnet build "WebAPI20230803.csproj" -c Release -o /app/build
+## -r alpine.3.6-x64
+#
+#FROM build AS publish
+#RUN dotnet publish "WebAPI20230803.csproj" -c Release -o /app/publish
+## --os linux --arch x64
+## /p:UseAppHost=false
+## /p:self-contained=true
+#
+#FROM build AS final
+#ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+#ENV TZ=Asia/Seoul
+#USER root
+#
+#WORKDIR /app
+#COPY --from=publish /app/publish .
+#ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]

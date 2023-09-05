@@ -1,0 +1,41 @@
+# 베이스 이미지 설정
+# FROM mcr.microsoft.com/dotnet/nightly/runtime:7.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS base
+RUN apk add --no-cache icu-libs
+
+# icu-libs 를 넣으니까 SqlConnection.Open()에서 에러가 나지 않았다.
+
+WORKDIR /app
+# EXPOSE 80
+EXPOSE 8080
+# EXPOSE 443
+
+# 빌드 이미지 설정
+FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
+# RUN apk add --no-cache dotnet-sdk-7.0
+
+# FROM alpine:3.9.4 AS build
+# openssh libunwind nghttp2-libs libidn krb5-libs libuuid lttng-ust zlib libstdc++ libintl icu
+
+WORKDIR /src
+COPY ["WebAPI20230803.csproj", "."]
+RUN dotnet restore "./WebAPI20230803.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "WebAPI20230803.csproj" -c Release -o /app/build
+# -r alpine.3.6-x64
+
+FROM build AS publish
+RUN dotnet publish "WebAPI20230803.csproj" -c Release -o /app/publish
+# --os linux --arch x64
+# /p:UseAppHost=false
+# /p:self-contained=true
+
+FROM base AS final
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+ENV TZ=Asia/Seoul
+USER root
+
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]
