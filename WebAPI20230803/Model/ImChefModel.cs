@@ -30,5 +30,6 @@ namespace WebAPI
         public Int64 player_id { get; set; }
         public string player_name { get; set; }
         public string food_name { get; set; }
+        public DateTime dt { get; set; }
     }
 }

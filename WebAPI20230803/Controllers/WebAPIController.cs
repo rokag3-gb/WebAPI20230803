@@ -120,6 +120,7 @@ namespace WebAPI
                         + ", v.player_id"
                         + ", player_name = max(p.player_name)"
                         + ", food_name = max(p.food_name)"
+                        + ", dt = getdate()"
                         + " from DB1.food.vote v"
                         + " inner join DB1.food.player p on v.player_id = p.player_id"
                         + " group by v.player_id"

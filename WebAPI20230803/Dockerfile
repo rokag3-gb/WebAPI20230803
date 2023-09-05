@@ -1,6 +1,10 @@
 # golang:1.20 이미지를 chisel 이름으로 새로운 단계 시작
 FROM golang:1.20 as chisel
 
+LABEL maintainer="rokag3@gmail.com"
+LABEL version="1.0.0"
+LABEL description="dockerfile test"
+
 # GitHub 저장소에서 Chisel repo 클론하고 /opt/chisel 으로 이동,
 RUN git clone --depth 1 -b main https://github.com/canonical/chisel /opt/chisel
 WORKDIR /opt/chisel
