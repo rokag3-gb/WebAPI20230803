@@ -1,23 +1,57 @@
-# .NET SDK를 사용하여 앱 빌드
+# .NET SDK 이미지를 사용하여 애플리케이션 빌드
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /app
+WORKDIR /src
+EXPOSE 8080
 
 # 소스 코드 복사
 COPY . .
 
-# 앱 빌드
-RUN dotnet publish -c Release -o out /p:self-contained=true
+# RUN dotnet build -c Release
+RUN dotnet build /src/WebAPI20230803.csproj -c Release -o /app/build /p:self-contained=true
+# --os linux --arch x64
 
-# Distroless 베이스 이미지를 사용하여 최종 이미지 생성
-FROM gcr.io/distroless/cc
+# 프로젝트 publish
+RUN dotnet publish /src/WebAPI20230803.csproj -c Release -o /app/publish /p:self-contained=true
+# --os linux --arch x64
+
+# Distroless 베이스 이미지를 사용하여 최종 이미지 빌드
 # FROM gcr.io/distroless/base
-# FROM gcr.io/distroless/dotnet:latest
+FROM gcr.io/distroless/cc
+# FROM gcr.io/distroless/static
 # FROM gcr.io/distroless/dotnet/core/aspnet:3.1
 # FROM gcr.io/distroless/dotnet/core/aspnet:debug
-WORKDIR /app
-COPY --from=build /app/out .
+# FROM gcr.io/distroless/dotnet:latest
+WORKDIR /app/publish
+COPY --from=build /app/publish .
 
-ENTRYPOINT ["./WebAPI20230803"]
+# 애플리케이션 실행
+# ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]
+CMD ["/app/publish/WebAPI20230803"]
+
+#############################################
+
+## .NET SDK를 사용하여 앱 빌드
+#FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+#WORKDIR /app
+#
+## 소스 코드 복사
+#COPY . .
+#
+## 앱 빌드
+#RUN dotnet publish -c Release -o out
+## /p:self-contained=true
+#
+## Distroless 베이스 이미지를 사용하여 최종 이미지 생성
+#FROM gcr.io/distroless/cc
+## FROM gcr.io/distroless/base
+## FROM gcr.io/distroless/dotnet:latest
+## FROM gcr.io/distroless/dotnet/core/aspnet:3.1
+## FROM gcr.io/distroless/dotnet/core/aspnet:debug
+#WORKDIR /app
+#COPY --from=build /app/out .
+#
+#ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]
+## ENTRYPOINT ["./WebAPI20230803"]
 
 #############################################
 
@@ -26,11 +60,17 @@ ENTRYPOINT ["./WebAPI20230803"]
 ## RUN apk add bash
 ## && apt-get update && apt-get install -y dotnet-sdk-6.0
 #
+#WORKDIR /app
+#
 ## dotnet build 명령을 사용하여 앱을 빌드합니다.
-#RUN dotnet build WebAPI20230803.csproj -c Release -o bin/
+#RUN dotnet build WebAPI20230803.csproj
+## -c Release
+## -o bin/
 #
 ## dotnet publish 명령을 사용하여 앱을 배포합니다.
-#RUN dotnet publish WebAPI20230803.csproj -c Release -o bin/ -r linux-x64
+#RUN dotnet publish WebAPI20230803.csproj
+## -c Release
+## -o bin/ -r linux-x64
 #
 #COPY ./bin/Debug/net7.0 /app
 #
