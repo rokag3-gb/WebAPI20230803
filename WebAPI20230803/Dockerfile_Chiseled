@@ -1,11 +1,11 @@
-# golang:1.20 ÀÌ¹ÌÁö¸¦ chisel ÀÌ¸§À¸·Î »õ·Î¿î ´Ü°è ½ÃÀÛ
+# golang:1.20 ì´ë¯¸ì§€ë¥¼ chisel ì´ë¦„ìœ¼ë¡œ ìƒˆë¡œìš´ ë‹¨ê³„ ì‹œì‘
 FROM golang:1.20 as chisel
 
 LABEL maintainer="rokag3@gmail.com"
 LABEL version="1.0.0"
 LABEL description="dockerfile test"
 
-# GitHub ÀúÀå¼Ò¿¡¼­ Chisel repo Å¬·ĞÇÏ°í /opt/chisel À¸·Î ÀÌµ¿,
+# GitHub ì €ì¥ì†Œì—ì„œ Chisel repo í´ë¡ í•˜ê³  /opt/chisel ìœ¼ë¡œ ì´ë™,
 RUN git clone --depth 1 -b main https://github.com/canonical/chisel /opt/chisel
 WORKDIR /opt/chisel
 RUN go build ./cmd/chisel
@@ -13,10 +13,10 @@ RUN go build ./cmd/chisel
 # https://hub.docker.com/_/microsoft-dotnet
 FROM mcr.microsoft.com/dotnet/sdk:7.0-jammy AS build
 
-# ¾Õ¼­ ºôµåÇÑ Chisel ½ÇÇà ÆÄÀÏÀ» /usr/bin/ À¸·Î º¹»ç
+# ì•ì„œ ë¹Œë“œí•œ Chisel ì‹¤í–‰ íŒŒì¼ì„ /usr/bin/ ìœ¼ë¡œ ë³µì‚¬
 COPY --from=chisel /opt/chisel/chisel /usr/bin/
 
-# /rootfs µğ·ºÅä¸® »ı¼ºÇÏ°í chisel cut À¸·Î Ubuntu 22.04 ¸±¸®Áî¿¡ ÇÊ¿äÇÑ ¶óÀÌºê·¯¸®¸¦ ÃßÃâÇØ¼­ /rootfs µğ·ºÅä¸®¿¡ ÀúÀå
+# /rootfs ë””ë ‰í† ë¦¬ ìƒì„±í•˜ê³  chisel cut ìœ¼ë¡œ Ubuntu 22.04 ë¦´ë¦¬ì¦ˆì— í•„ìš”í•œ ë¼ì´ë¸ŒëŸ¬ë¦¬ë¥¼ ì¶”ì¶œí•´ì„œ /rootfs ë””ë ‰í† ë¦¬ì— ì €ì¥
 RUN mkdir /rootfs
 RUN chisel cut --release "ubuntu-22.04" --root /rootfs/ libicu70_libs
 # libssl3_libs libc6_libs dotnet-runtime-6.0_libs dotnet-hostfxr-6.0_libs libgcc-s1_libs liblttng-ust1_libs libstdc++6_libs libunwind-13_libs libunwind8_libs zlib1g_libs
@@ -29,7 +29,7 @@ COPY . .
 RUN dotnet restore "WebAPI20230803.csproj"
 
 
-# °Ô½Ã
+# ê²Œì‹œ
 RUN dotnet publish -c Release -o /app --os linux --arch x64
 # --self-contained true
 # -p:PublishSingleFile=true

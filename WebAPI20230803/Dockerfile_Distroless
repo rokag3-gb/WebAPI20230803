@@ -1,47 +1,76 @@
-# .NET SDK ÀÌ¹ÌÁö¸¦ »ç¿ëÇÏ¿© ¾ÖÇÃ¸®ÄÉÀÌ¼Ç ºôµå
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
-EXPOSE 8080
+# FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS build
 
-# ¼Ò½º ÄÚµå º¹»ç
+WORKDIR /app
+
 COPY . .
 
-# RUN dotnet build -c Release
-RUN dotnet build /src/WebAPI20230803.csproj -c Release -o /app/build /p:self-contained=true
+EXPOSE 8080
+
+RUN dotnet build WebAPI20230803.csproj -c Release
+RUN dotnet publish WebAPI20230803.csproj -c Release -o /app/publish /p:self-contained=true
 # --os linux --arch x64
 
-# ÇÁ·ÎÁ§Æ® publish
-RUN dotnet publish /src/WebAPI20230803.csproj -c Release -o /app/publish /p:self-contained=true
-# --os linux --arch x64
-
-# Distroless º£ÀÌ½º ÀÌ¹ÌÁö¸¦ »ç¿ëÇÏ¿© ÃÖÁ¾ ÀÌ¹ÌÁö ºôµå
-# FROM gcr.io/distroless/base
+## Distroless ë² ì´ìŠ¤ ì´ë¯¸ì§€ë¥¼ ì‚¬ìš©í•˜ì—¬ ìµœì¢… ì´ë¯¸ì§€ ë¹Œë“œ
+# FROM gcr.io/distroless/dotnet-7.0-sdk
+# FROM gcr.io/distroless/dotnet-7.0-runtime
+# FROM asia.gcr.io/distroless/dotnet-7.0
 FROM gcr.io/distroless/cc
-# FROM gcr.io/distroless/static
-# FROM gcr.io/distroless/dotnet/core/aspnet:3.1
-# FROM gcr.io/distroless/dotnet/core/aspnet:debug
-# FROM gcr.io/distroless/dotnet:latest
-WORKDIR /app/publish
-COPY --from=build /app/publish .
+# FROM gcr.io/distroless/base
+# FROM gcr.io/distroless/base-nossl
 
-# ¾ÖÇÃ¸®ÄÉÀÌ¼Ç ½ÇÇà
+COPY --from=build /app/publish /app
+
+# ENTRYPOINT ["dotnet", "run", "--project", "WebAPI20230803.csproj"]
 # ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]
-CMD ["/app/publish/WebAPI20230803"]
+CMD ["/app/WebAPI20230803"]
 
 #############################################
 
-## .NET SDK¸¦ »ç¿ëÇÏ¿© ¾Û ºôµå
+## .NET SDK ì´ë¯¸ì§€ë¥¼ ì‚¬ìš©í•˜ì—¬ ì• í”Œë¦¬ì¼€ì´ì…˜ ë¹Œë“œ
+#FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+#WORKDIR /src
+#EXPOSE 8080
+#
+## ì†ŒìŠ¤ ì½”ë“œ ë³µì‚¬
+#COPY . .
+#
+## RUN dotnet build -c Release
+#RUN dotnet build /src/WebAPI20230803.csproj -c Release -o /app/build /p:self-contained=true
+## --os linux --arch x64
+#
+## í”„ë¡œì íŠ¸ publish
+#RUN dotnet publish /src/WebAPI20230803.csproj -c Release -o /app/publish /p:self-contained=true
+## --os linux --arch x64
+#
+## Distroless ë² ì´ìŠ¤ ì´ë¯¸ì§€ë¥¼ ì‚¬ìš©í•˜ì—¬ ìµœì¢… ì´ë¯¸ì§€ ë¹Œë“œ
+## FROM gcr.io/distroless/base
+#FROM gcr.io/distroless/cc
+## FROM gcr.io/distroless/static
+## FROM gcr.io/distroless/dotnet/core/aspnet:3.1
+## FROM gcr.io/distroless/dotnet/core/aspnet:debug
+## FROM gcr.io/distroless/dotnet:latest
+#WORKDIR /app/publish
+#COPY --from=build /app/publish .
+#
+## ì• í”Œë¦¬ì¼€ì´ì…˜ ì‹¤í–‰
+## ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]
+#CMD ["/app/publish/WebAPI20230803"]
+
+#############################################
+
+## .NET SDKë¥¼ ì‚¬ìš©í•˜ì—¬ ì•± ë¹Œë“œ
 #FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 #WORKDIR /app
 #
-## ¼Ò½º ÄÚµå º¹»ç
+## ì†ŒìŠ¤ ì½”ë“œ ë³µì‚¬
 #COPY . .
 #
-## ¾Û ºôµå
+## ì•± ë¹Œë“œ
 #RUN dotnet publish -c Release -o out
 ## /p:self-contained=true
 #
-## Distroless º£ÀÌ½º ÀÌ¹ÌÁö¸¦ »ç¿ëÇÏ¿© ÃÖÁ¾ ÀÌ¹ÌÁö »ı¼º
+## Distroless ë² ì´ìŠ¤ ì´ë¯¸ì§€ë¥¼ ì‚¬ìš©í•˜ì—¬ ìµœì¢… ì´ë¯¸ì§€ ìƒì„±
 #FROM gcr.io/distroless/cc
 ## FROM gcr.io/distroless/base
 ## FROM gcr.io/distroless/dotnet:latest
@@ -62,12 +91,12 @@ CMD ["/app/publish/WebAPI20230803"]
 #
 #WORKDIR /app
 #
-## dotnet build ¸í·ÉÀ» »ç¿ëÇÏ¿© ¾ÛÀ» ºôµåÇÕ´Ï´Ù.
+## dotnet build ëª…ë ¹ì„ ì‚¬ìš©í•˜ì—¬ ì•±ì„ ë¹Œë“œí•©ë‹ˆë‹¤.
 #RUN dotnet build WebAPI20230803.csproj
 ## -c Release
 ## -o bin/
 #
-## dotnet publish ¸í·ÉÀ» »ç¿ëÇÏ¿© ¾ÛÀ» ¹èÆ÷ÇÕ´Ï´Ù.
+## dotnet publish ëª…ë ¹ì„ ì‚¬ìš©í•˜ì—¬ ì•±ì„ ë°°í¬í•©ë‹ˆë‹¤.
 #RUN dotnet publish WebAPI20230803.csproj
 ## -c Release
 ## -o bin/ -r linux-x64
@@ -80,7 +109,7 @@ CMD ["/app/publish/WebAPI20230803"]
 
 #############################################
 
-## º£ÀÌ½º ÀÌ¹ÌÁö ¼³Á¤
+## ë² ì´ìŠ¤ ì´ë¯¸ì§€ ì„¤ì •
 #FROM gcr.io/distroless/base AS base
 #
 #RUN apt-get update && apt-get install -y dotnet-sdk-7.0
@@ -88,7 +117,7 @@ CMD ["/app/publish/WebAPI20230803"]
 #WORKDIR /app
 #EXPOSE 8080
 #
-## ºôµå ÀÌ¹ÌÁö ¼³Á¤
+## ë¹Œë“œ ì´ë¯¸ì§€ ì„¤ì •
 ## FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 ## RUN apk add --no-cache dotnet-sdk-7.0
 #

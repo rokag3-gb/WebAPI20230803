@@ -1,16 +1,16 @@
-# º£ÀÌ½º ÀÌ¹ÌÁö ¼³Á¤
+# ë² ì´ìŠ¤ ì´ë¯¸ì§€ ì„¤ì •
 # FROM mcr.microsoft.com/dotnet/nightly/runtime:7.0-alpine AS base
 FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS base
 RUN apk add --no-cache icu-libs
 
-# icu-libs ¸¦ ³ÖÀ¸´Ï±î SqlConnection.Open()¿¡¼­ ¿¡·¯°¡ ³ªÁö ¾Ê¾Ò´Ù.
+# icu-libsë¥¼ ë„£ìœ¼ë‹ˆê¹Œ SqlConnection.Open()ì—ì„œ ì—ëŸ¬ê°€ ë‚˜ì§€ ì•ŠìŒ.
 
 WORKDIR /app
 # EXPOSE 80
 EXPOSE 8080
 # EXPOSE 443
 
-# ºôµå ÀÌ¹ÌÁö ¼³Á¤
+# ë¹Œë“œ ì´ë¯¸ì§€ ì„¤ì •
 FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 # RUN apk add --no-cache dotnet-sdk-7.0
 
