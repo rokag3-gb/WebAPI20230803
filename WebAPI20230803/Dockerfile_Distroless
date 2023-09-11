@@ -23,7 +23,8 @@ COPY --from=build /app/publish /app
 
 # ENTRYPOINT ["dotnet", "run", "--project", "WebAPI20230803.csproj"]
 # ENTRYPOINT ["dotnet", "WebAPI20230803.dll"]
-CMD ["/app/WebAPI20230803"]
+ENTRYPOINT ["/app/WebAPI20230803"]
+# CMD ["/app/WebAPI20230803"]
 
 #############################################
 

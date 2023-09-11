@@ -1,3 +1,4 @@
+# Docker hub - ASP.NET Core Runtime 6.0 / 7.0 -> https://hub.docker.com/_/microsoft-dotnet-aspnet
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
